@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Office Manager — Your workday, intelligently managed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #FBF8F1;
+    --paper-raised: #FFFFFF;
+    --ink: #201F2B;
+    --ink-soft: #5D5B6E;
+    --rule: #E4DFD1;
+
+    --gold: #E0A438;
+    --gold-deep:#B9791C;
+    --teal:  #1E9B8A;
+    --teal-deep:#116B5F;
+    --coral: #EF6F5B;
+    --indigo:#5B5FCF;
+    --forest:#1E7A57;
+    --plum:  #9B5DE5;
+    --sky:   #2C9CDB;
+
+    --white: #FFFFFF;
+    --radius: 10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Newsreader', serif;
+    font-weight:600;
+    color:var(--ink);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+  img,svg{max-width:100%;display:block;}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 32px;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  :focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
+
+  /* ---------- NAV ---------- */
+  header.site{
+    position:sticky;top:0;z-index:50;
+    background:rgba(251,248,241,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--rule);
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 32px;max-width:1160px;margin:0 auto;
+  }
+  .brand{
+    font-family:'Newsreader', serif;font-size:20px;font-weight:700;
+    display:flex;align-items:center;gap:9px;
+  }
+  .brand .dot{
+    width:11px;height:11px;border-radius:50%;
+    background:conic-gradient(var(--coral), var(--gold), var(--teal), var(--indigo), var(--coral));
+    display:inline-block;
+  }
+  .nav-links{display:flex;gap:28px;font-size:14.5px;}
+  .nav-links a{text-decoration:none;color:var(--ink-soft);padding-bottom:3px;border-bottom:2px solid transparent;transition:border-color .15s ease, color .15s ease;}
+  .nav-links a:hover{color:var(--ink);border-color:var(--coral);}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    font-family:'IBM Plex Sans', sans-serif;font-weight:600;font-size:14.5px;
+    padding:12px 22px;border-radius:8px;cursor:pointer;
+    text-decoration:none;border:1px solid transparent;
+    transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary{background:var(--coral);color:var(--white);box-shadow:0 4px 14px rgba(239,111,91,0.35);}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(239,111,91,0.45);}
+  .btn-ghost{background:var(--white);border-color:var(--rule);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .btn-dark{background:var(--ink);color:var(--white);}
+  .btn-dark:hover{transform:translateY(-1px);}
+  @media (max-width:900px){ .nav-links{display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:80px 0 70px;
+    background:
+      radial-gradient(900px 420px at 85% -10%, rgba(224,164,56,0.18), transparent 60%),
+      radial-gradient(700px 500px at -5% 30%, rgba(91,95,207,0.13), transparent 60%),
+      var(--paper);
+    overflow:hidden;
+    position:relative;
+  }
+  .hero-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:60px;align-items:center;}
+  @media (max-width:920px){ .hero-grid{grid-template-columns:1fr;gap:44px;} }
+  .eyebrow-chip{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--white);border:1px solid var(--rule);border-radius:999px;
+    padding:7px 14px;font-size:13.5px;color:var(--ink-soft);margin-bottom:22px;
+  }
+  .eyebrow-chip .sq{width:8px;height:8px;border-radius:2px;background:var(--coral);}
+  h1.headline{font-size:clamp(38px, 4.6vw, 56px);line-height:1.08;}
+  h1.headline .hl{color:var(--coral);}
+  .hero p.lede{font-size:18px;color:var(--ink-soft);margin-top:20px;max-width:46ch;}
+  .hero-actions{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;}
+  .trust-line{margin-top:22px;font-size:13.5px;color:var(--ink-soft);display:flex;align-items:center;gap:8px;}
+
+  /* Workflow illustration (hero) */
+  .flow-illust{position:relative;}
+  .flow-card{
+    background:var(--paper-raised);border:1px solid var(--rule);border-radius:16px;
+    padding:26px;box-shadow:0 20px 50px -20px rgba(32,31,43,0.18);
+  }
+  .flow-card-title{font-size:13px;color:var(--ink-soft);margin-bottom:18px;font-family:'IBM Plex Mono',monospace;}
+  .flow-chain{display:flex;flex-direction:column;gap:0;}
+  .flow-step{display:flex;align-items:center;gap:14px;padding:10px 0;}
+  .flow-icon{
+    width:42px;height:42px;border-radius:11px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;color:#fff;
+  }
+  .flow-step .label .t1{font-size:15px;font-weight:600;}
+  .flow-step .label .t2{font-size:12.5px;color:var(--ink-soft);}
+  .flow-arrow{margin-left:20px;color:var(--rule);height:16px;}
+
+  /* ---------- SECTION shell ---------- */
+  section{padding:88px 0;}
+  .section-head{max-width:660px;margin-bottom:48px;}
+  .section-head .eyebrow-chip{margin-bottom:16px;}
+  .section-head h2{font-size:clamp(28px,3.2vw,40px);line-height:1.16;}
+  .section-head p{margin-top:14px;color:var(--ink-soft);font-size:16.5px;}
+  .tint-teal{background:linear-gradient(180deg, rgba(30,155,138,0.07), rgba(30,155,138,0) 40%);}
+  .tint-gold{background:linear-gradient(180deg, rgba(224,164,56,0.10), rgba(224,164,56,0) 40%);}
+  .tint-indigo{background:linear-gradient(180deg, rgba(91,95,207,0.08), rgba(91,95,207,0) 40%);}
+
+  /* PROBLEM */
+  .pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .pain-cell{
+    background:var(--paper-raised);border:1px solid var(--rule);border-radius:12px;
+    padding:22px 22px;display:flex;gap:14px;align-items:flex-start;
+  }
+  .pain-cell .ic{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;}
+  .pain-cell p{margin:0;font-size:15px;padding-top:4px;}
+  @media (max-width:760px){ .pain-grid{grid-template-columns:1fr;} }
+
+  /* EMPLOYEE COMPARISON */
+  .persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media (max-width:860px){.persona-grid{grid-template-columns:1fr;}}
+  .persona-card{border-radius:18px;padding:30px;position:relative;overflow:hidden;}
+  .persona-card.bad{background:#FFF3F0;border:1.5px solid #F6C9BC;}
+  .persona-card.good{background:#EAFAF3;border:1.5px solid #B9E9D3;}
+  .persona-top{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .avatar{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Newsreader',serif;font-weight:600;font-size:20px;color:#fff;flex-shrink:0;}
+  .avatar.bad{background:var(--coral);}
+  .avatar.good{background:var(--teal);}
+  .persona-name{font-family:'Newsreader',serif;font-size:19px;font-weight:600;}
+  .persona-role{font-size:13px;color:var(--ink-soft);}
+  .persona-tag{
+    display:inline-block;margin-top:2px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;
+  }
+  .persona-tag.bad{background:#F9DED6;color:#B34328;}
+  .persona-tag.good{background:#CDF0E0;color:#0E6B4C;}
+  .persona-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .persona-list li{display:flex;align-items:flex-start;gap:10px;font-size:14.8px;}
+  .persona-list .mk{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .persona-list.bad .mk{background:#F6C9BC;color:#B34328;}
+  .persona-list.good .mk{background:#B9E9D3;color:#0E6B4C;}
+  .persona-quote{margin-top:20px;padding-top:18px;border-top:1px dashed rgba(0,0,0,0.12);font-style:italic;font-family:'Newsreader',serif;font-size:16px;color:var(--ink-soft);}
+
+  /* SOLUTION */
+  .solution-wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+  @media (max-width:900px){.solution-wrap{grid-template-columns:1fr;}}
+  .solution-wrap p{color:var(--ink-soft);font-size:17px;}
+  .approve-note{
+    margin-top:20px;padding:16px 18px;border-radius:12px;
+    background:var(--paper-raised);border:1px solid var(--rule);font-size:15px;
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  .approve-note .ic{flex-shrink:0;width:30px;height:30px;border-radius:8px;background:var(--indigo);display:flex;align-items:center;justify-content:center;color:#fff;}
+
+  /* HOW IT WORKS - numbered colorful */
+  .steps{display:flex;flex-direction:column;gap:0;}
+  .step-row{
+    display:grid;grid-template-columns:64px 1fr;gap:22px;
+    padding:24px 0;border-bottom:1px solid var(--rule);align-items:flex-start;
+  }
+  .step-row:last-child{border-bottom:none;}
+  .step-num{
+    width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Newsreader',serif;font-size:19px;font-weight:700;color:#fff;flex-shrink:0;
+  }
+  .step-row h3{font-size:19px;margin-bottom:4px;}
+  .step-row .desc{color:var(--ink-soft);font-size:15.5px;}
+
+  /* FEATURES numbered */
+  .features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  @media (max-width:980px){.features-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.features-grid{grid-template-columns:1fr;}}
+  .feature-card{
+    background:var(--paper-raised);border:1px solid var(--rule);border-radius:14px;
+    padding:24px;min-height:190px;position:relative;transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .feature-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -16px rgba(32,31,43,0.25);}
+  .feature-badge{
+    width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;color:#fff;margin-bottom:14px;
+  }
+  .feature-card h3{font-size:17px;margin-bottom:8px;}
+  .feature-card p{font-size:14.5px;color:var(--ink-soft);margin:0;}
+
+  /* DIFFERENT (comparison table) */
+  .compare{border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--paper-raised);}
+  .compare-row{display:grid;grid-template-columns:1fr 1fr;}
+  .compare-row + .compare-row{border-top:1px solid var(--rule);}
+  .compare-row .cell{padding:18px 26px;font-size:15.5px;}
+  .compare-row .cell.old{color:var(--ink-soft);border-right:1px solid var(--rule);}
+  .compare-row .cell.new{position:relative;font-weight:500;}
+  .compare-row .cell.new::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--teal);}
+  .compare-head{display:grid;grid-template-columns:1fr 1fr;background:#F3F0E6;}
+  .compare-head .cell{padding:14px 26px;font-size:13px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-weight:600;}
+  @media (max-width:700px){
+    .compare-row, .compare-head{grid-template-columns:1fr;}
+    .compare-row .cell.old{border-right:none;border-bottom:1px solid var(--rule);}
+  }
+
+  /* BENEFITS */
+  .benefits{background:linear-gradient(135deg, #1E7A57 0%, #145C42 100%);color:#fff;position:relative;overflow:hidden;}
+  .benefits::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(600px 300px at 90% 10%, rgba(255,255,255,0.08), transparent 60%);
+  }
+  .benefits .wrap{position:relative;}
+  .benefits .section-head p{color:rgba(255,255,255,0.72);}
+  .benefits .section-head h2{color:var(--white);}
+  .benefit-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+  .benefit-cell{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:22px 20px;}
+  .benefit-cell .ic{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+  .benefit-cell h3{color:var(--white);font-size:16.5px;margin-bottom:8px;}
+  .benefit-cell p{color:rgba(255,255,255,0.72);font-size:13.5px;margin:0;}
+  @media (max-width:960px){.benefit-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:560px){.benefit-grid{grid-template-columns:1fr;}}
+
+  /* USE CASES */
+  .usecase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:900px){.usecase-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:600px){.usecase-grid{grid-template-columns:1fr;}}
+  .usecase-card{background:var(--paper-raised);border:1px solid var(--rule);border-radius:14px;padding:22px;}
+  .usecase-card .role{font-family:'Newsreader',serif;font-size:18px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+  .usecase-card .role .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .usecase-card .desc{color:var(--ink-soft);font-size:14.8px;}
+
+  /* EXAMPLE EXPERIENCE */
+  .example-wrap{display:grid;grid-template-columns:0.9fr 1.1fr;gap:56px;align-items:center;}
+  @media (max-width:900px){.example-wrap{grid-template-columns:1fr;}}
+  .daybook{background:var(--paper-raised);border:1px solid var(--rule);border-radius:16px;overflow:hidden;box-shadow:0 20px 50px -24px rgba(32,31,43,0.2);}
+  .daybook-head{display:flex;justify-content:space-between;align-items:baseline;padding:20px 24px 14px;border-bottom:1px solid var(--rule);}
+  .daybook-head .day{font-family:'Newsreader',serif;font-size:19px;font-weight:600;}
+  .daybook-head .date{font-size:12.5px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;}
+  .daybook-list{padding:6px 0;}
+  .daybook-item{display:flex;gap:14px;align-items:flex-start;padding:14px 24px;border-bottom:1px solid #F0EDE1;}
+  .daybook-item:last-child{border-bottom:none;}
+  .daybook-item .chk{width:18px;height:18px;border:2px solid var(--teal);border-radius:5px;margin-top:2px;flex-shrink:0;position:relative;}
+  .daybook-item.done .chk{background:var(--teal);}
+  .daybook-item.done .chk::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(40deg);}
+  .daybook-item .txt .t1{font-size:15px;}
+  .daybook-item .txt .t2{font-size:12.5px;color:var(--gold-deep);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+
+  /* SECURITY */
+  .security-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px;}
+  .security-cell{background:var(--paper-raised);border:1px solid var(--rule);border-radius:12px;padding:20px 22px;display:flex;gap:14px;align-items:flex-start;}
+  .security-cell .ic{width:30px;height:30px;border-radius:8px;background:var(--indigo);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+  .security-cell p{margin:0;font-size:15px;}
+  .security-caveat{margin-top:22px;font-size:14px;color:var(--ink-soft);font-style:italic;}
+  @media (max-width:700px){.security-grid{grid-template-columns:1fr;}}
+
+  /* PRICING */
+  .price-toggle{display:inline-flex;align-items:center;gap:14px;background:var(--paper-raised);border:1px solid var(--rule);border-radius:999px;padding:6px;margin-bottom:44px;}
+  .price-toggle button{
+    border:none;background:transparent;padding:9px 20px;border-radius:999px;font-family:'IBM Plex Sans';
+    font-size:14.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .2s ease;
+  }
+  .price-toggle button.active{background:var(--ink);color:#fff;}
+  .price-toggle .save-badge{font-size:12.5px;color:var(--teal-deep);font-weight:600;background:#DFF5EE;padding:5px 12px;border-radius:999px;}
+  .pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  @media (max-width:1000px){.pricing-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:600px){.pricing-grid{grid-template-columns:1fr;}}
+  .price-card{
+    background:var(--paper-raised);border:1.5px solid var(--rule);border-radius:16px;
+    padding:28px 24px;display:flex;flex-direction:column;position:relative;
+  }
+  .price-card.popular{border-color:var(--gold);box-shadow:0 18px 40px -20px rgba(224,164,56,0.5);}
+  .popular-flag{
+    position:absolute;top:-13px;left:24px;background:var(--gold);color:#fff;font-size:11.5px;font-weight:700;
+    padding:5px 12px;border-radius:999px;letter-spacing:0.02em;
+  }
+  .price-tier{font-family:'Newsreader',serif;font-size:20px;font-weight:600;margin-bottom:6px;}
+  .price-desc{font-size:13.5px;color:var(--ink-soft);margin-bottom:20px;min-height:34px;}
+  .price-amount{display:flex;align-items:baseline;gap:6px;margin-bottom:4px;}
+  .price-amount .num{font-family:'Newsreader',serif;font-size:38px;font-weight:700;}
+  .price-amount .cur{font-size:15px;color:var(--ink-soft);}
+  .price-per{font-size:13px;color:var(--ink-soft);margin-bottom:22px;}
+  .price-feats{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:10px;flex-grow:1;}
+  .price-feats li{display:flex;gap:9px;align-items:flex-start;font-size:14px;}
+  .price-feats li .ck{color:var(--teal);flex-shrink:0;margin-top:2px;}
+  .price-card .btn{width:100%;}
+
+  /* USE CASES colors handled inline via style attr for dot colors */
+
+  /* FAQ */
+  .faq{border-top:1px solid var(--rule);}
+  details{border-bottom:1px solid var(--rule);padding:20px 0;}
+  details summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:17px;font-family:'Newsreader',serif;font-weight:600;}
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{content:"+";font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--coral);transition:transform .2s ease;}
+  details[open] summary::after{content:"–";}
+  details p{color:var(--ink-soft);margin:14px 0 4px;font-size:15.5px;max-width:70ch;}
+
+  /* FINAL CTA */
+  .final{background:linear-gradient(135deg, #201F2B 0%, #34324A 100%);color:#fff;}
+  .final h2{color:var(--white);font-size:clamp(30px,3.6vw,44px);max-width:16ch;}
+  .final p.sub{color:rgba(255,255,255,0.68);margin-top:16px;max-width:52ch;font-size:17px;}
+  .final-wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+  @media (max-width:900px){.final-wrap{grid-template-columns:1fr;}}
+  .form-card{background:var(--paper-raised);color:var(--ink);border-radius:16px;padding:32px;}
+  .form-row{margin-bottom:16px;}
+  .form-row label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
+  .form-row input, .form-row select{
+    width:100%;padding:11px 12px;border:1px solid var(--rule);border-radius:8px;
+    font-family:'IBM Plex Sans',sans-serif;font-size:15px;background:#fff;color:var(--ink);
+  }
+  .form-row input:focus, .form-row select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold);}
+  .form-note{font-size:13px;color:var(--ink-soft);margin-top:14px;}
+  .form-submit{width:100%;margin-top:6px;padding:13px;font-size:15px;}
+
+  footer{padding:30px 0;border-top:1px solid #2E2C3E;background:#201F2B;color:rgba(255,255,255,0.55);font-size:13.5px;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="nav">
+    <div class="brand"><span class="dot"></span>AI Office Manager</div>
+    <nav class="nav-links">
+      <a href="#how">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#usecases">Use Cases</a>
+      <a href="#security">Security</a>
+    </nav>
+    <a href="#join" class="btn btn-primary">Get Early Access</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow-chip"><span class="sq"></span>A proactive workplace assistant</div>
+      <h1 class="headline">Your workday, <span class="hl">intelligently</span> managed.</h1>
+      <p class="lede">AI Office Manager organizes tasks, prepares documents, coordinates meetings, summarizes communications, and keeps important work moving — so you can focus on the decisions that matter.</p>
+      <div class="hero-actions">
+        <a href="#join" class="btn btn-primary">Join the Early Access List</a>
+        <a href="#how" class="btn btn-ghost">See How It Works</a>
+      </div>
+      <div class="trust-line">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#1E9B8A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        No technical setup required. Works with the tools your team already uses.
+      </div>
+    </div>
+
+    <div class="flow-illust">
+      <div class="flow-card">
+        <div class="flow-card-title">HOW YOUR DAY GETS BUILT</div>
+        <div class="flow-chain">
+          <div class="flow-step">
+            <div class="flow-icon" style="background:var(--coral);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 6h18v12H3z" stroke="#fff" stroke-width="1.8"/><path d="M3 7l9 6 9-6" stroke="#fff" stroke-width="1.8"/></svg>
+            </div>
+            <div class="label"><div class="t1">Email &amp; messages come in</div><div class="t2">47 unread, sorted by urgency</div></div>
+          </div>
+          <svg class="flow-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="2"/></svg>
+          <div class="flow-step">
+            <div class="flow-icon" style="background:var(--gold);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="#fff" stroke-width="1.8"/></svg>
+            </div>
+            <div class="label"><div class="t1">Meetings get prepared</div><div class="t2">Briefs ready before you sit down</div></div>
+          </div>
+          <svg class="flow-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="2"/></svg>
+          <div class="flow-step">
+            <div class="flow-icon" style="background:var(--indigo);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="#fff" stroke-width="1.8"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h11" stroke="#fff" stroke-width="1.8"/></svg>
+            </div>
+            <div class="label"><div class="t1">Tasks are tracked</div><div class="t2">Nothing falls behind deadline</div></div>
+          </div>
+          <svg class="flow-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="2"/></svg>
+          <div class="flow-step">
+            <div class="flow-icon" style="background:var(--teal);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="label"><div class="t1">You approve &amp; move on</div><div class="t2">A clear, organized workday</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--coral);"></span>The problem</div>
+      <h2>Too much of your day is spent managing work instead of doing it.</h2>
+      <p>Employees lose valuable time switching between email, calendars, documents, meetings, and task-management tools. Important actions are delayed, follow-ups are missed, and information becomes difficult to find.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-cell"><div class="ic" style="background:var(--coral);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="#fff" stroke-width="1.8"/><rect x="13" y="4" width="7" height="7" rx="1.5" stroke="#fff" stroke-width="1.8"/><rect x="4" y="13" width="7" height="7" rx="1.5" stroke="#fff" stroke-width="1.8"/><rect x="13" y="13" width="7" height="7" rx="1.5" stroke="#fff" stroke-width="1.8"/></svg></div><p>Too many applications and notifications</p></div>
+      <div class="pain-cell"><div class="ic" style="background:var(--gold);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="1.8"/><path d="M12 8v4l3 2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><p>Repetitive administrative work</p></div>
+      <div class="pain-cell"><div class="ic" style="background:var(--indigo);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 16H3z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v4M12 17v.01" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><p>Missed tasks and follow-ups</p></div>
+      <div class="pain-cell"><div class="ic" style="background:var(--plum);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 10h18" stroke="#fff" stroke-width="1.8"/></svg></div><p>Meetings without proper preparation</p></div>
+      <div class="pain-cell"><div class="ic" style="background:var(--sky);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><p>Information scattered across platforms</p></div>
+      <div class="pain-cell"><div class="ic" style="background:var(--teal);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="#fff" stroke-width="1.8"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke="#fff" stroke-width="1.8"/></svg></div><p>Limited access to personal administrative support</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EMPLOYEE COMPARISON -->
+<section class="tint-teal" id="employee-comparison">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--teal);"></span>Two employees, same job</div>
+      <h2>Meet Ahmed and Sara. Same workload — very different days.</h2>
+      <p>One is managing everything manually and losing control of his work. The other uses AI Office Manager and stays organized without extra effort.</p>
+    </div>
+    <div class="persona-grid">
+      <div class="persona-card bad">
+        <div class="persona-top">
+          <div class="avatar bad">A</div>
+          <div>
+            <div class="persona-name">Ahmed</div>
+            <div class="persona-role">Operations Lead</div>
+          </div>
+          <span class="persona-tag bad" style="margin-left:auto;">Overloaded</span>
+        </div>
+        <ul class="persona-list bad">
+          <li><span class="mk">✕</span>Juggles 6 apps and loses track of what's urgent</li>
+          <li><span class="mk">✕</span>Missed two client follow-ups this week</li>
+          <li><span class="mk">✕</span>Walks into meetings without preparation</li>
+          <li><span class="mk">✕</span>Spends evenings catching up on email</li>
+          <li><span class="mk">✕</span>Can't say what's actually due tomorrow</li>
+        </ul>
+        <div class="persona-quote">"I feel like I'm always reacting, never ahead."</div>
+      </div>
+      <div class="persona-card good">
+        <div class="persona-top">
+          <div class="avatar good">S</div>
+          <div>
+            <div class="persona-name">Sara</div>
+            <div class="persona-role">Operations Lead</div>
+          </div>
+          <span class="persona-tag good" style="margin-left:auto;">In control</span>
+        </div>
+        <ul class="persona-list good">
+          <li><span class="mk">✓</span>Starts the day with priorities already sorted</li>
+          <li><span class="mk">✓</span>Follow-ups are drafted before she even asks</li>
+          <li><span class="mk">✓</span>Walks into every meeting with a ready brief</li>
+          <li><span class="mk">✓</span>Leaves work at a reasonable hour</li>
+          <li><span class="mk">✓</span>Always knows what's due and what's done</li>
+        </ul>
+        <div class="persona-quote">"I finally spend my day deciding, not searching."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="wrap solution-wrap">
+    <div>
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--indigo);"></span>The solution</div>
+      <div class="section-head" style="margin-bottom:0;">
+        <h2>One assistant that keeps your entire workday moving.</h2>
+        <p>AI Office Manager connects your daily work in one intelligent experience. It identifies priorities, prepares what you need, reminds you about commitments, and suggests the next action before work falls behind.</p>
+      </div>
+      <div class="approve-note">
+        <div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke="#fff" stroke-width="1.7"/></svg></div>
+        <div>You stay in control. Sensitive actions wait for your approval before anything is sent, scheduled, or shared.</div>
+      </div>
+    </div>
+    <div class="flow-card">
+      <div class="flow-card-title">WHAT THE ASSISTANT CONNECTS</div>
+      <div class="flow-chain">
+        <div class="flow-step"><div class="flow-icon" style="background:var(--coral);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18v12H3z" stroke="#fff" stroke-width="1.8"/><path d="M3 7l9 6 9-6" stroke="#fff" stroke-width="1.8"/></svg></div><div class="label"><div class="t1">Email &amp; calendar</div></div></div>
+        <div class="flow-step"><div class="flow-icon" style="background:var(--gold);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6z" stroke="#fff" stroke-width="1.8"/><path d="M9 12h8M9 16h8M9 8h3" stroke="#fff" stroke-width="1.8"/></svg></div><div class="label"><div class="t1">Documents &amp; files</div></div></div>
+        <div class="flow-step"><div class="flow-icon" style="background:var(--indigo);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="#fff" stroke-width="1.8"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h11" stroke="#fff" stroke-width="1.8"/></svg></div><div class="label"><div class="t1">Tasks &amp; commitments</div></div></div>
+        <div class="flow-step"><div class="flow-icon" style="background:var(--teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.8"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="1.8"/></svg></div><div class="label"><div class="t1">Your daily plan</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="tint-gold" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--gold);"></span>How it works</div>
+      <h2>From scattered work to a clear daily plan</h2>
+    </div>
+    <div class="steps">
+      <div class="step-row">
+        <div class="step-num" style="background:var(--coral);">1</div>
+        <div><h3>Connect</h3><div class="desc">Link your approved email, calendar, documents, and task-management tools.</div></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num" style="background:var(--gold);">2</div>
+        <div><h3>Understand</h3><div class="desc">The assistant learns your responsibilities, priorities, deadlines, and preferred working style.</div></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num" style="background:var(--indigo);">3</div>
+        <div><h3>Prepare</h3><div class="desc">It creates summaries, drafts, meeting briefs, reminders, and recommended actions.</div></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num" style="background:var(--plum);">4</div>
+        <div><h3>Approve</h3><div class="desc">You review and approve important actions before they are completed.</div></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num" style="background:var(--teal);">5</div>
+        <div><h3>Improve</h3><div class="desc">The assistant adapts to your feedback and becomes more useful over time.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--indigo);"></span>Key features</div>
+      <h2>Everything a good office manager would do for you</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-badge" style="background:var(--coral);">1</div>
+        <h3>Your intelligent daily briefing</h3>
+        <p>Start every morning with a clear view of priorities, meetings, deadlines, and recommended next steps.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-badge" style="background:var(--gold);">2</div>
+        <h3>Smart email and communication support</h3>
+        <p>Summarize long conversations, identify requests, and draft responses that need urgent attention.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-badge" style="background:var(--indigo);">3</div>
+        <h3>Meeting preparation and follow-up</h3>
+        <p>Agendas, participant context, related documents, summaries, decisions, and assigned actions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-badge" style="background:var(--plum);">4</div>
+        <h3>Proactive task management</h3>
+        <p>Commitments from emails and meetings are organized by priority, with reminders before deadlines.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-badge" style="background:var(--teal);">5</div>
+        <h3>Document creation</h3>
+        <p>First drafts of reports, presentations, proposals, and internal updates using approved information.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-badge" style="background:var(--sky);">6</div>
+        <h3>Intelligent scheduling</h3>
+        <p>Find suitable meeting times, resolve conflicts, prepare invitations, and protect focus time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-badge" style="background:var(--gold-deep);">7</div>
+        <h3>Knowledge assistant</h3>
+        <p>Find answers across company policies, documents, and previous meetings without searching manually.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-badge" style="background:var(--teal-deep);">8</div>
+        <h3>Human-approved actions</h3>
+        <p>The assistant prepares and recommends — you control what is sent, shared, or scheduled.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT MAKES IT DIFFERENT -->
+<section class="tint-teal" id="different">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--teal);"></span>What makes it different</div>
+      <h2>More than another AI chatbot</h2>
+    </div>
+    <div class="compare">
+      <div class="compare-head">
+        <div class="cell">Traditional assistant tools</div>
+        <div class="cell">AI Office Manager</div>
+      </div>
+      <div class="compare-row"><div class="cell old">Wait for individual questions</div><div class="cell new">Proactively identifies what needs attention</div></div>
+      <div class="compare-row"><div class="cell old">Handle isolated tasks</div><div class="cell new">Coordinates work across the full day</div></div>
+      <div class="compare-row"><div class="cell old">Provide generic responses</div><div class="cell new">Adapts to the employee's role and priorities</div></div>
+      <div class="compare-row"><div class="cell old">Require frequent manual input</div><div class="cell new">Learns from connected work systems</div></div>
+      <div class="compare-row"><div class="cell old">Produce information</div><div class="cell new">Helps move work toward completion</div></div>
+      <div class="compare-row"><div class="cell old">Limited accountability</div><div class="cell new">Tracks commitments and unfinished actions</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip" style="background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2);color:#fff;"><span class="sq" style="background:#fff;"></span>Benefits</div>
+      <h2>Give every employee more time, clarity, and control.</h2>
+    </div>
+    <div class="benefit-grid">
+      <div class="benefit-cell"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="#fff" stroke-width="1.8"/></svg></div><h3>Save time</h3><p>Fewer hours on scheduling, searching, summarizing, and routine communications.</p></div>
+      <div class="benefit-cell"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="1.8"/></svg></div><h3>Improve focus</h3><p>Turn scattered notifications into a prioritized daily action plan.</p></div>
+      <div class="benefit-cell"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="2"/></svg></div><h3>Reduce missed work</h3><p>Track commitments, deadlines, decisions, and follow-ups automatically.</p></div>
+      <div class="benefit-cell"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 19h16M4 15l4-5 4 3 5-7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Increase work quality</h3><p>More consistent reports, messages, and meeting materials, with less effort.</p></div>
+      <div class="benefit-cell"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="#fff" stroke-width="1.8"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke="#fff" stroke-width="1.8"/></svg></div><h3>Make support accessible</h3><p>Intelligent administrative support, without a dedicated assistant per person.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--gold);"></span>Pricing</div>
+      <h2>Professional support without the cost of a personal assistant</h2>
+      <p>Start free, upgrade as your work grows. Switch to yearly billing and save 15% on every paid plan.</p>
+    </div>
+
+    <div class="price-toggle" id="priceToggle">
+      <button type="button" class="active" data-mode="monthly">Monthly</button>
+      <button type="button" data-mode="yearly">Yearly</button>
+      <span class="save-badge">Save 15% yearly</span>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Lite</div>
+        <div class="price-desc">Try the daily basics, free forever.</div>
+        <div class="price-amount"><span class="num">0</span><span class="cur">SR</span></div>
+        <div class="price-per">free, always</div>
+        <ul class="price-feats">
+          <li><span class="ck">✓</span>Daily briefing</li>
+          <li><span class="ck">✓</span>1 connected inbox</li>
+          <li><span class="ck">✓</span>Basic task reminders</li>
+          <li><span class="ck">✓</span>7-day activity history</li>
+        </ul>
+        <a href="#join" class="btn btn-ghost">Start free</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Beginner</div>
+        <div class="price-desc">For one person who wants everything organized.</div>
+        <div class="price-amount"><span class="num price-num" data-monthly="99" data-yearly="84">99</span><span class="cur">SR</span></div>
+        <div class="price-per mono price-per-note">per month</div>
+        <ul class="price-feats">
+          <li><span class="ck">✓</span>Everything in Lite</li>
+          <li><span class="ck">✓</span>Email &amp; meeting prep</li>
+          <li><span class="ck">✓</span>Document drafts</li>
+          <li><span class="ck">✓</span>Unlimited task tracking</li>
+        </ul>
+        <a href="#join" class="btn btn-ghost">Get started</a>
+      </div>
+
+      <div class="price-card popular">
+        <div class="popular-flag">Most popular</div>
+        <div class="price-tier">Advanced</div>
+        <div class="price-desc">For managers coordinating a busy workload.</div>
+        <div class="price-amount"><span class="num price-num" data-monthly="299" data-yearly="254">299</span><span class="cur">SR</span></div>
+        <div class="price-per mono price-per-note">per month</div>
+        <ul class="price-feats">
+          <li><span class="ck">✓</span>Everything in Beginner</li>
+          <li><span class="ck">✓</span>Intelligent scheduling</li>
+          <li><span class="ck">✓</span>Knowledge assistant</li>
+          <li><span class="ck">✓</span>Priority support</li>
+        </ul>
+        <a href="#join" class="btn btn-primary">Get started</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Enterprise</div>
+        <div class="price-desc">For companies rolling this out across teams.</div>
+        <div class="price-amount"><span class="num">Custom</span></div>
+        <div class="price-per">tailored to your organization</div>
+        <ul class="price-feats">
+          <li><span class="ck">✓</span>Everything in Advanced</li>
+          <li><span class="ck">✓</span>Company-wide deployment</li>
+          <li><span class="ck">✓</span>Role-based access controls</li>
+          <li><span class="ck">✓</span>Dedicated onboarding</li>
+        </ul>
+        <a href="#join" class="btn btn-dark">Contact us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="tint-indigo" id="usecases">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--indigo);"></span>Use cases</div>
+      <h2>Designed for the way modern teams work</h2>
+    </div>
+    <div class="usecase-grid">
+      <div class="usecase-card"><div class="role"><span class="dot" style="background:var(--coral);"></span>Managers</div><div class="desc">Track team commitments, prepare meetings, and receive concise performance updates.</div></div>
+      <div class="usecase-card"><div class="role"><span class="dot" style="background:var(--gold);"></span>Sales employees</div><div class="desc">Prepare for customer meetings, draft follow-ups, and keep opportunities moving.</div></div>
+      <div class="usecase-card"><div class="role"><span class="dot" style="background:var(--indigo);"></span>Project teams</div><div class="desc">Capture decisions, assign actions, and monitor deadlines.</div></div>
+      <div class="usecase-card"><div class="role"><span class="dot" style="background:var(--plum);"></span>HR employees</div><div class="desc">Prepare communications, organize interviews, and find approved policy information.</div></div>
+      <div class="usecase-card"><div class="role"><span class="dot" style="background:var(--teal);"></span>Executives</div><div class="desc">Receive daily briefings, decision summaries, and prioritized requests.</div></div>
+      <div class="usecase-card"><div class="role"><span class="dot" style="background:var(--sky);"></span>Small-business owners</div><div class="desc">Manage customers, suppliers, meetings, documents, and daily operations from one place.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLE EXPERIENCE -->
+<section class="tint-gold">
+  <div class="wrap example-wrap">
+    <div>
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--gold);"></span>A morning, reimagined</div>
+      <div class="section-head" style="margin-bottom:0;">
+        <h2>Imagine starting your day like this</h2>
+      </div>
+    </div>
+    <div class="daybook">
+      <div class="daybook-head"><span class="day">Good morning</span><span class="date mono">3 PRIORITIES</span></div>
+      <div class="daybook-list">
+        <div class="daybook-item"><span class="chk"></span><div class="txt"><div class="t1">Your 10:00 AM customer meeting brief is ready.</div></div></div>
+        <div class="daybook-item"><span class="chk"></span><div class="txt"><div class="t1">A supplier hasn't responded to yesterday's request — a follow-up email is prepared.</div></div></div>
+        <div class="daybook-item"><span class="chk"></span><div class="txt"><div class="t1">Two commitments from Monday's meeting are due tomorrow.</div></div></div>
+        <div class="daybook-item done"><span class="chk"></span><div class="txt"><div class="t1">Your weekly management update is ready for review.</div></div></div>
+      </div>
+      <div style="padding:18px 24px;display:flex;gap:12px;flex-wrap:wrap;border-top:1px solid var(--rule);">
+        <a href="#" class="btn btn-primary" style="font-size:13.5px;padding:9px 16px;">Review My Priorities</a>
+        <a href="#" class="btn btn-ghost" style="font-size:13.5px;padding:9px 16px;">Approve Drafts</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section id="security">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--indigo);"></span>Security &amp; control</div>
+      <h2>Your assistant works for you — not instead of you.</h2>
+    </div>
+    <div class="security-grid">
+      <div class="security-cell"><div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="10" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M8 10V7a4 4 0 018 0v3" stroke="#fff" stroke-width="1.8"/></svg></div><p>Permission-based access</p></div>
+      <div class="security-cell"><div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="2"/></svg></div><p>Human approval for sensitive actions</p></div>
+      <div class="security-cell"><div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.8"/><path d="M12 7v5l3 2" stroke="#fff" stroke-width="1.8"/></svg></div><p>Clear activity and decision history</p></div>
+      <div class="security-cell"><div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke="#fff" stroke-width="1.7"/></svg></div><p>Company-controlled data sources</p></div>
+      <div class="security-cell"><div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="#fff" stroke-width="1.8"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke="#fff" stroke-width="1.8"/></svg></div><p>Role-based access controls</p></div>
+      <div class="security-cell"><div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><p>Configurable privacy and retention settings</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap" style="max-width:820px;">
+    <div class="section-head">
+      <div class="eyebrow-chip"><span class="sq" style="background:var(--coral);"></span>FAQ</div>
+      <h2>Questions people ask us</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>Is this just another chatbot?</summary><p>No. It's designed to proactively organize work, recognize pending commitments, prepare actions, and support you throughout the day — rather than wait for you to ask.</p></details>
+      <details><summary>Will it send messages without permission?</summary><p>Sensitive actions require your approval before they're sent, scheduled, or shared.</p></details>
+      <details><summary>Does it replace employees or office managers?</summary><p>No. It's built to handle repetitive coordination and administrative work, so people can focus on judgment, relationships, and higher-value tasks.</p></details>
+      <details><summary>Do I need technical experience?</summary><p>No. The experience is designed for ordinary employees, with guided setup and simple everyday interactions.</p></details>
+      <details><summary>Which workplace tools will it support?</summary><p>The first version will prioritize email, calendar, documents, meetings, and task-management platforms based on early-user demand.</p></details>
+      <details><summary>When will it be available?</summary><p>Early users will be invited in stages. Joining the waiting list gives you priority access and product updates.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final" id="join">
+  <div class="wrap final-wrap">
+    <div>
+      <h2>What could you achieve with your own AI Office Manager?</h2>
+      <p class="sub">Join the early-access list and help shape an assistant built to give every employee more time, clearer priorities, and better control of their workday.</p>
+    </div>
+    <form class="form-card" onsubmit="event.preventDefault(); this.querySelector('.form-submit').textContent='Request received';">
+      <div class="form-row"><label for="email">Work email</label><input id="email" type="email" required placeholder="you@company.com"></div>
+      <div class="form-row"><label for="role">Job role</label><input id="role" type="text" required placeholder="e.g. Operations Manager"></div>
+      <div class="form-row">
+        <label for="size">Company size</label>
+        <select id="size">
+          <option>Just me</option><option>2–10 employees</option><option>11–50 employees</option><option>51–200 employees</option><option>201+ employees</option>
+        </select>
+      </div>
+      <div class="form-row"><label for="challenge">Biggest daily work challenge</label><input id="challenge" type="text" placeholder="What slows your day down most?"></div>
+      <button type="submit" class="btn btn-primary form-submit">Join the Early Access List</button>
+      <div class="form-note">No payment required. Early members receive product updates and priority access to the pilot.</div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>AI Office Manager — a concept in early development.</div>
+    <div>Name: Abdulaziz Albash · Assignment A2.1 - Product Promotion Page</div>
+  </div>
+</footer>
+
+<script>
+  // Pricing toggle
+  const toggle = document.getElementById('priceToggle');
+  const nums = document.querySelectorAll('.price-num');
+  const perNotes = document.querySelectorAll('.price-per-note');
+  if(toggle){
+    toggle.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        toggle.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.dataset.mode;
+        nums.forEach(n=>{ n.textContent = mode === 'yearly' ? n.dataset.yearly : n.dataset.monthly; });
+        perNotes.forEach(p=>{ p.textContent = mode === 'yearly' ? 'per month, billed yearly' : 'per month'; });
+      });
+    });
+  }
+</script>
+
+</body>
+</html>
